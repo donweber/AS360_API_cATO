@@ -57,31 +57,57 @@ def main():
         print(f"Failed to retrieve issue history: {e}")
         sys.exit(3)
 
-    if not issues_data or "Items" not in issues_data or len(issues_data["Items"]) == 0:
-        print(f"No history found for Issue ID: {args.IssueId}")
-        sys.exit(0)
+    print(json.dumps(issues_data, indent=4))
+
+    #if not issues_data or "Items" not in issues_data or len(issues_data["Items"]) == 0:    
+    #if not issues_data or "Items" not in issues_data or len(issues_data["Items"]) == 0:
+    #   print(f"No history found for Issue ID: {args.IssueId}")
+    #   sys.exit(0)
 
     # Extract fields where Status changed to Fixed
     filtered = []
-    for item in issues_data["Items"]:
-        changes = item.get("Changes", [])
-        for change in changes:
-            if change.get("Property") == "Status" and change.get("NewValue") == "Fixed":
-                filtered.append({
-                    "Status": change.get("NewValue"),
-                    "ChangedAt": item.get("ChangedAt"),
-                    "ChangedId": item.get("ChangedBy", {}).get("Id"),
-                    "ChangedFirstName": item.get("ChangedBy", {}).get("FirstName"),
-                    "ChangedLastName": item.get("ChangedBy", {}).get("LastName"),
-                    "ChangedUserName": item.get("ChangedBy", {}).get("UserName"),
-                    "ChangedEmail": item.get("ChangedBy", {}).get("Email")
-                })
+    #for item in issues_data["Items"]:
+    for item in issues_data:
+
+        scan_name = item["ScanExecution"]["ScanName"]
+        scan_id = item["ScanExecution"]["ScanId"]
+        execution_id = item["ScanExecution"]["ExecutionId"]
+        changed_at = item["ChangedAt"]
+        changed_by = item["ChangedBy"]
+
+        print(f"ScanName: {scan_name}")
+        print(f"ScanId: {scan_id}")
+        print(f"ExecutionId: {execution_id}")
+        print(f"ChangedAt: {changed_at}")
+        print(f"ChangedBy: {changed_by}")
+
+
+        Status = None
+        for change in item["Changes"]:
+            property_name = change["Property"]
+            new_value = change["NewValue"]
+            print(f"property_name: {property_name}")
+            print(f"new_value: {new_value}")
+            if property_name == "Status" and new_value == "Fixed":
+                Status = new_value
+
+
+
+        if Status:  # Only append if Status changed to Fixed
+            filtered.append({
+                "ScanName": scan_name,
+                "ScanId": scan_id,
+                "ExecutionId": execution_id,
+                "Status": Status,
+                "ChangedAt": changed_at,
+                "ChangedBy": changed_by
+            })
 
     # Output filtered changes as JSON
     print(json.dumps(filtered, indent=4))
 
     # Print summary
-    print(f"Summary: {len(filtered)} changes found with status Fixed")
+#    print(f"Summary: {len(filtered)} changes found with status Fixed")
 
 if __name__ == "__main__":
     main()
