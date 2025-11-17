@@ -57,7 +57,7 @@ def main():
         print(f"Failed to retrieve issue history: {e}")
         sys.exit(3)
 
-    print(json.dumps(issues_data, indent=4))
+    #print(json.dumps(issues_data, indent=4))
 
     #if not issues_data or "Items" not in issues_data or len(issues_data["Items"]) == 0:    
     #if not issues_data or "Items" not in issues_data or len(issues_data["Items"]) == 0:
@@ -69,25 +69,18 @@ def main():
     #for item in issues_data["Items"]:
     for item in issues_data:
 
-        scan_name = item["ScanExecution"]["ScanName"]
-        scan_id = item["ScanExecution"]["ScanId"]
-        execution_id = item["ScanExecution"]["ExecutionId"]
+        if item["ScanExecution"]:
+            scan_name = item["ScanExecution"]["ScanName"]
+            scan_id = item["ScanExecution"]["ScanId"]
+            execution_id = item["ScanExecution"]["ExecutionId"]
+
         changed_at = item["ChangedAt"]
         changed_by = item["ChangedBy"]
-
-        print(f"ScanName: {scan_name}")
-        print(f"ScanId: {scan_id}")
-        print(f"ExecutionId: {execution_id}")
-        print(f"ChangedAt: {changed_at}")
-        print(f"ChangedBy: {changed_by}")
-
 
         Status = None
         for change in item["Changes"]:
             property_name = change["Property"]
             new_value = change["NewValue"]
-            print(f"property_name: {property_name}")
-            print(f"new_value: {new_value}")
             if property_name == "Status" and new_value == "Fixed":
                 Status = new_value
 
@@ -98,7 +91,7 @@ def main():
                 "ScanName": scan_name,
                 "ScanId": scan_id,
                 "ExecutionId": execution_id,
-                "Status": Status,
+                "Status": new_value,
                 "ChangedAt": changed_at,
                 "ChangedBy": changed_by
             })
