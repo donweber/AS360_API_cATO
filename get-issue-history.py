@@ -6,10 +6,11 @@ import urllib3
 
 def main():
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="Fetch AppScan Issue History and filter for Status=Fixed")
+    parser = argparse.ArgumentParser(description="Fetch AppScan Issue History and filter for Input Status")
     parser.add_argument("--IssueId", required=True, help="Issue ID")
     parser.add_argument("--ApiKey", required=True, help="API Key")
     parser.add_argument("--ApiSecret", required=True, help="API Secret")
+    parser.add_argument("--Status", required=True, help="Issue Status")
     args = parser.parse_args()
 
     # Base URL for AppScan 360
@@ -81,7 +82,7 @@ def main():
         for change in item["Changes"]:
             property_name = change["Property"]
             new_value = change["NewValue"]
-            if property_name == "Status" and new_value == "Fixed":
+            if property_name == "Status" and new_value == args.Status:
                 Status = new_value
 
 
