@@ -10,7 +10,7 @@ def main():
     parser.add_argument("--IssueId", required=True, help="Issue ID")
     parser.add_argument("--ApiKey", required=True, help="API Key")
     parser.add_argument("--ApiSecret", required=True, help="API Secret")
-    parser.add_argument("--Status", required=True, help="Issue Status")
+    parser.add_argument("--Status", required=True, help="Status")
     args = parser.parse_args()
 
     # Base URL for AppScan 360
@@ -87,7 +87,7 @@ def main():
 
 
 
-        if Status:  # Only append if Status changed to Fixed
+        if Status:  # Only append if Status changed to args.Status
             filtered.append({
                 "ScanName": scan_name,
                 "ScanId": scan_id,
@@ -101,7 +101,7 @@ def main():
     print(json.dumps(filtered, indent=4))
 
     # Print summary
-#    print(f"Summary: {len(filtered)} changes found with status Fixed")
+#    print(f"Summary: {len(filtered)} changes found with status args.Status")
 
 if __name__ == "__main__":
     main()
