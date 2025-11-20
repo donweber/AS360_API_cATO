@@ -1,12 +1,13 @@
 import requests
 import argparse
 import json
+import csv
 import urllib.parse
 import sys
 
 def main():
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="Fetch AppScan Issues by Status")
+    parser = argparse.ArgumentParser(description="Fetch AppScan Applications")
     parser.add_argument("--ApiKey", required=True, help="API Key")
     parser.add_argument("--ApiSecret", required=True, help="API Secret")
     args = parser.parse_args()
@@ -30,9 +31,9 @@ def main():
         auth_response.raise_for_status()
         token = auth_response.json().get("Token")
         if not token:
-            print("Authentication token not received.")
+            #print("Authentication token not received.")
             sys.exit(2)
-        print(f"Auth successful. Token: {token}")
+        #print(f"Auth successful. Token: {token}")
     except requests.RequestException as e:
         print(f"Failed to authenticate: {e}")
         sys.exit(2)
@@ -43,7 +44,7 @@ def main():
     # Build URL
     apps_url = f"{base_url}/Apps?%24top=100&%24count=false"
 
-    print(f"Request URL: {apps_url}")
+    #print(f"Request URL: {apps_url}")
 
     try:
         apps_response = requests.get(apps_url, headers=headers, verify=False)
@@ -78,10 +79,27 @@ def main():
         })
 
     # Output filtered issues as JSON
-    print(json.dumps(filtered, indent=4))
+    #print(json.dumps(filtered, indent=4))
 
     # Print summary
-    print(f"Summary: {len(filtered)} applications found")
+    #print(f"Summary: {len(filtered)} applications found")
+
+    csv_file = "applications.csv"
+    
+    # Get keys from the first subscription for header
+    if filtered:
+        headers = filtered[0].keys()
+
+    # Write to CSV
+        with open(csv_file, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=headers)
+            writer.writeheader()
+            writer.writerows(filtered)
+
+        print(f"CSV file '{csv_file}' created successfully.")
+    else:
+        print("No applications found in JSON.")
+
 
 if __name__ == "__main__":
     main()
