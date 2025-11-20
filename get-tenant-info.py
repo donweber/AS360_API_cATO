@@ -32,9 +32,9 @@ def main():
         if not token:
             print("Authentication token not received.")
             sys.exit(2)
-        print(f"Auth successful. Token: {token}")
+        #print(f"Auth successful. Token: {token}")
     except requests.RequestException as e:
-        print(f"Failed to authenticate: {e}")
+        #print(f"Failed to authenticate: {e}")
         sys.exit(2)
 
     # Prepare headers
@@ -45,44 +45,47 @@ def main():
     # Build issues URL with filter
     tenant_url = f"{base_url}/Account/TenantInfo"
 
-    print(f"Request URL: {tenant_url}")
+    #print(f"Request URL: {tenant_url}")
+    #print(f"headers: {headers}");
 
     try:
         tenant_response = requests.get(tenant_url, headers=headers, verify=False)
         tenant_response.raise_for_status()
         tenant_data = tenant_response.json()
     except requests.RequestException as e:
-        print(f"Failed to retrieve issues: {e}")
+        #print(f"Failed to retrieve issues: {e}")
         sys.exit(3)
 
-    if not tenant_data or "Items" not in tenant_data or len(tenant_data["Items"]) == 0:
-        print(f"No tenant Info found")
-        sys.exit(0)
+    #print(tenant_data)
+
+    #if not tenant_data or "Items" not in tenant_data or len(tenant_data["Items"]) == 0:
+    #    print(f"No tenant Info found")
+    #    sys.exit(0)
 
     # Extract fields
     filtered = []
-    for issue in tenant_data["Items"]:
-        filtered.append({
-            "TenantName": issue.get("TenantName"),
-            "TenantId": issue.get("TenantId"),
-            "ContactEmail": issue.get("ContactEmail"),
-            "Subscriptions": issue.get("Subscriptions"),
-            "SubscriptionTechnologies": issue.get("SubscriptionTechnologies"),
-            "ActiveTechnologies": issue.get("ActiveTechnologies"),
-            "UserInfo": issue.get("UserInfo"),
-            "SCAEnabled": issue.get("SCAEnabled"),
-            "MaxScansPerApp": issue.get("MaxScansPerApp"),
-            "MaxUsers": issue.get("MaxUsers"),
-            "OpenAIConfiguration": issue.get("OpenAIConfiguration"),
-            "ReportCustomization": issue.get("ReportCustomization"),
-            "NumAssetGroupsWithIssuesStatusInheritance": issue.get("NumAssetGroupsWithIssuesStatusInheritance")
-        })
+    #for issue in tenant_data["Items"]:
+    filtered.append({
+        "TenantName": tenant_data.get("TenantName"),
+        "TenantId": tenant_data.get("TenantId"),
+        "ContactEmail": tenant_data.get("ContactEmail"),
+        "Subscriptions": tenant_data.get("Subscriptions"),
+        "SubscriptionTechnologies": tenant_data.get("SubscriptionTechnologies"),
+        "ActiveTechnologies": tenant_data.get("ActiveTechnologies"),
+        "UserInfo": tenant_data.get("UserInfo"),
+        "SCAEnabled": tenant_data.get("SCAEnabled"),
+        "MaxScansPerApp": tenant_data.get("MaxScansPerApp"),
+        "MaxUsers": tenant_data.get("MaxUsers"),
+        "OpenAIConfiguration": tenant_data.get("OpenAIConfiguration"),
+        "ReportCustomization": tenant_data.get("ReportCustomization"),
+       "NumAssetGroupsWithIssuesStatusInheritance": tenant_data.get("NumAssetGroupsWithIssuesStatusInheritance")
+    })
 
     # Output filtered issues as JSON
     print(json.dumps(filtered, indent=4))
 
     # Print summary
-    print(f"Summary: {len(filtered)} issues found with status {args.Status}")
+    #print(f"Summary: {len(filtered)} issues found with status {args.Status}")
 
 if __name__ == "__main__":
     main()
