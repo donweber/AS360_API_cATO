@@ -17,3 +17,5 @@ a41b433e-f36b-1410-870f-00659a64aee6
 JyIDJzKcF2qjkMlQhsaLbXY-mTBqoRxJ
 
 python compare-datetimestamps.py --t1 "2025-09-06T08:57:07.0952628Z" --t2 "2025-11-14T18:31:24.1280083Z"
+
+python get-applications.py --ApiKey local_90e47a5b-9f48-fb1a-b59a-16ff0d03b76d --ApiSecret l9d2k4MpW5iAeabh5mNMc26AMc1YnlvUm9bpQW4myGA9
