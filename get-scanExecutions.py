@@ -31,17 +31,19 @@ def main():
         auth_response.raise_for_status()
         token = auth_response.json().get("Token")
         if not token:
-            print("Authentication token not received.")
+            #print("Authentication token not received.")
             sys.exit(2)
-        print(f"Auth successful. Token: {token}")
+        #print(f"Auth successful. Token: {token}")
     except requests.RequestException as e:
-        print(f"Failed to authenticate: {e}")
+        #print(f"Failed to authenticate: {e}")
         sys.exit(2)
 
     # Prepare headers
-    headers = {"Authorization": f"Bearer {token}", 
-               "Content-Type": "application/json"
-            }
+    #headers = {"Authorization: fBearer {token}", 
+    #           "Content-Type: application/json"
+    #        }
+    headers = {"Authorization": f"Bearer {token}"}
+
 
     # Build issues URL with filter
     executions_url = f"{base_url}/Scans/{args.ScanId}/Executions?%24top=100&%24count=false"
@@ -57,21 +59,22 @@ def main():
         print(f"Failed to retrieve executions: {e}")
         sys.exit(3)
 
-    if not execution_data or "Items" not in execution_data or len(execution_data["Items"]) == 0:
-        print(f"No executions found for scan ID: {args.ScanId}")
-        sys.exit(0)
+    #if not execution_data or "Items" not in execution_data or len(execution_data["Items"]) == 0:
+    #    print(f"No executions found for scan ID: {args.ScanId}")
+    #    sys.exit(0)
 
     # Extract fields
     filtered = []
-    for issue in execution_data["Items"]:
+    #for issue in execution_data["Items"]:
+    for item in execution_data:
         filtered.append({
-            "executionId": issue.get("Id"),
+            "executionId": item.get("Id"),
             "scanId": args.ScanId,
-            "ExecutedAt": issue.get("ExecutedAt"),
-            "ExecutionDurationSec": issue.get("ExecutionDurationSec"),
-            "Status": issue.get("Status"),
-            "ExecutionProgress": issue.get("ExecutionProgress"),
-            "SupportModeEnabled": issue.get("SupportModeEnabled")
+            "ExecutedAt": item.get("ExecutedAt"),
+            "ExecutionDurationSec": item.get("ExecutionDurationSec"),
+            "Status": item.get("Status"),
+            "ExecutionProgress": item.get("ExecutionProgress"),
+            "SupportModeEnabled": item.get("SupportModeEnabled")
         })
 
     # Output filtered issues as JSON
